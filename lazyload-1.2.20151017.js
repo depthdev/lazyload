@@ -1,74 +1,96 @@
 /*
-   Copyright 2015 CLEARWAVE DESIGNS, LLC
-   
-      Licensed under the Apache License, Version 2.0 (the "License");
-      you may not use this file except in compliance with the License.
-      You may obtain a copy of the License at
-   
-          http://www.apache.org/licenses/LICENSE-2.0
-   
-      Unless required by applicable law or agreed to in writing, software
-      distributed under the License is distributed on an "AS IS" BASIS,
-      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-      See the License for the specific language governing permissions and
-      limitations under the License.
-    
-   Author:        Adam Carson
-   Website:       http://clearwavedesigns.com
-   Dependencies:  None.
-    
-   Name(s):       Lazyload
-   Version:       1.2.20151017
-   Description:   This is an image, iframe & script lazy-loader. 663 bytes (minified). No dependencies. Preloading. Custom attribute/source reference.
- */
- 
+ Lazyload v1.3.0
+ (c) 2015 Clearwave Designs, LLC. http://clearwavedesigns.com
+ License: Apache 2.0
+*/
+
+// a = array
+// d = distances (from top)
+// e = elements
+// g = grandparent (parent element)
+// n = node list
+// o = options object
+// p = pause
+// r = reset
+// s = set
+// t = top
+// v = viewport height
+
+'use strict';
+
 function Lazyload(o) {
   // Elems (img,iframe,script)
-  var e=(function(){var a=[],n=document.querySelectorAll('['+o.attr+']'),i=0,l=n.length;for(;i<l;i++){a[i]=n[i];}return a;})();
+  var e = (function () {
+    var a = [],
+    n = document.querySelectorAll('[' + o.attr + ']'),
+    i = 0,
+    l = n.length;for (; i < l; i++) {
+      a[i] = n[i];
+    }return a;
+  }());
   // Viewport Height
   var v = innerHeight;
   // Pause
   var p = false;
-  // Load
-  var l = function() {
-    for(var i=0,l=d.length;i<l;i++) {
-      e[0].setAttribute('src',e[0].getAttribute(o.attr));
+  // Set
+  var s = function() {
+    for (var i = 0, l = d.length; i < l; i++) {
+      e[0].setAttribute('src', e[0].getAttribute(o.attr));
       e.shift(); // Remove t image from the array
     }
     r();
   };
   // Distances
   var d = [];
+  // Top
+  var t = function(e) {
+    var g = e,
+    c = 0;
+    while (g) {
+      c += g.offsetTop;
+      g = g.offsetParent;
+    }
+    return c;
+  };
   // Reset
   var r = function() {
     d = []; // Reset distances for next set of images
-    for (var i=0,l=e.length;i<l;i++) {
+    for (var i = 0, l = e.length; i < l; i++) {
       // Parent Element (starting off with current element)
-      var g = e[i];
-      d[i] = 0;
-      while (g) {
-        d[i] += g.offsetTop;
-        g = g.offsetParent;
-      }
-      if (i > 0 && d[i] > d[i-1]) {
-        d.pop(); // Remove element if farther down the page and not side-by-side
+      d[i] = t(e[i]);
+      // Remove element if farther down the page and not side-by-side and exit
+      if (i > 0 && d[i] > d[i - 1]) {
+        d.pop();
         break;
       }
     }
     p = false;
   };
   // Init
-  (function() {
+  (function () {
     r();
-    addEventListener('scroll', function() {
+    addEventListener('scroll', function () {
       if (!p && d[0] < v + o.preload + document.body.scrollTop) {
         p = true;
-        l();
+        s();
       }
     }.bind(this));
-    dispatchEvent(new Event('scroll'));
-    addEventListener('resize', function() {
+    addEventListener('load', function() {
+      // setTimeout is used because document.body.scrollTop is inaccurate onload
+      setTimeout(function() {
+        var scrolled = v + o.preload + document.body.scrollTop;
+        for (var i = 0, l = e.length; i < l; i++) {
+          d[i] = t(e[i]);
+          if (d[i] > scrolled) {
+            d.pop();
+            break;
+          }
+        }
+        s();
+      }.bind(this), 0);
+    }.bind(this));
+    addEventListener('resize', function () {
       v = innerHeight;
     }.bind(this));
-  }.bind(this))()
+  }.bind(this)());
 } // LAZYLOAD
