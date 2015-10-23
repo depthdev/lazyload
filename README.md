@@ -1,4 +1,4 @@
-# Lazyload by Clearwave Designs, LLC
+# Lazyload
 Image, Iframe &#38; Script Lazy-loader
 
 <ul>
