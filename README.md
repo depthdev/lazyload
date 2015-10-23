@@ -2,7 +2,7 @@
 Image, Iframe &#38; Script Lazy-loader
 
 <ul>
-  <li>0.85 KB</li>
+  <li>0.85 KB minified</li>
   <li>No dependencies</li>
   <li>Preloading</li>
   <li>Custom attribute/source reference</li>
