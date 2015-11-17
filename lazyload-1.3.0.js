@@ -70,15 +70,15 @@ function Lazyload(o) {
   (function () {
     r();
     addEventListener('scroll', function () {
-      if (!p && d[0] < v + o.preload + document.body.scrollTop) {
+      if (!p && d[0] < v + o.preload + (document.documentElement.scrollTop || document.body.parentNode.scrollTop || document.body.scrollTop)) {
         p = true;
         s();
       }
     }.bind(this));
     addEventListener('load', function() {
-      // setTimeout is used because document.body.scrollTop is inaccurate onload
+      // setTimeout is used because (document.documentElement.scrollTop || document.body.parentNode.scrollTop || document.body.scrollTop) is inaccurate onload
       setTimeout(function() {
-        var scrolled = v + o.preload + document.body.scrollTop;
+        var scrolled = v + o.preload + (document.documentElement.scrollTop || document.body.parentNode.scrollTop || document.body.scrollTop);
         for (var i = 0, l = e.length; i < l; i++) {
           d[i] = t(e[i]);
           if (d[i] > scrolled) {
