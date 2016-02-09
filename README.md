@@ -9,6 +9,8 @@ Image, Iframe &#38; Script Lazy-loader
   <li>Strict mode supported</li>
 </ul>
 
+<p><a href="http://codepen.io/depthdev/pen/xwYXJN" target="_blank">Demo</a></p>
+
 <p>Use:</p>
 <pre>
 new Lazyload({
